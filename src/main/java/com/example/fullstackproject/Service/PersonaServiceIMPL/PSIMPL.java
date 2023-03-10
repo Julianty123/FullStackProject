@@ -22,7 +22,7 @@ public class PSIMPL implements PersonaService {
 
     @Override
     public Persona crearPersona(Persona persona) {
-        persona.setCorreo(persona.getCorreo());
+        // persona.setCorreo(persona.getCorreo());
         return this.repo.save(persona);
     }
 

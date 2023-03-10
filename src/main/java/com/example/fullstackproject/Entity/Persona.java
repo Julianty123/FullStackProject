@@ -2,27 +2,27 @@ package com.example.fullstackproject.Entity;
 
 import jakarta.persistence.*;
 
+import java.util.Date;
+
 @Entity
-@Table(name = "jugos") // Nombre de la tabla en la base de datos a la que esta asociada
+@Table(name = "tabla_de_vendedores") // Nombre de la tabla en la base de datos a la que esta asociada
 public class Persona {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id") // Nombre de la columna en la base de datos a la que esta asociada
+    @Column(name = "MATRICULA") // Nombre de la columna en la base de datos a la que esta asociada
 
-    private int id;
+    private int matricula;
     private String nombre;
-    private String apellido;
-    private String correo;
-    private int edad;
-    private String sexo;
-    private String telefono;
+    private double porcentaje_comision;
+    private Date fecha_admision;
+    private boolean de_vacaciones;
 
-    public int getId() {
-        return id;
+    public int getMatricula() {
+        return matricula;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setMatricula(int matricula) {
+        this.matricula = matricula;
     }
 
     public String getNombre() {
@@ -33,43 +33,27 @@ public class Persona {
         this.nombre = nombre;
     }
 
-    public String getApellido() {
-        return apellido;
+    public double getPorcentaje_comision() {
+        return porcentaje_comision;
     }
 
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
+    public void setPorcentaje_comision(double porcentaje_comision) {
+        this.porcentaje_comision = porcentaje_comision;
     }
 
-    public String getCorreo() {
-        return correo;
+    public Date getFecha_admision() {
+        return fecha_admision;
     }
 
-    public void setCorreo(String correo) {
-        this.correo = correo;
+    public void setFecha_admision(Date fecha_admision) {
+        this.fecha_admision = fecha_admision;
     }
 
-    public int getEdad() {
-        return edad;
+    public boolean isDe_vacaciones() {
+        return de_vacaciones;
     }
 
-    public void setEdad(int edad) {
-        this.edad = edad;
-    }
-
-    public String getSexo() {
-        return sexo;
-    }
-
-    public void setSexo(String sexo) {
-        this.sexo = sexo;
-    }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
+    public void setDe_vacaciones(boolean de_vacaciones) {
+        this.de_vacaciones = de_vacaciones;
     }
 }

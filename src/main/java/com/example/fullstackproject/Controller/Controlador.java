@@ -2,6 +2,7 @@ package com.example.fullstackproject.Controller;
 
 import com.example.fullstackproject.Entity.Persona;
 import com.example.fullstackproject.Service.PersonaServiceIMPL.PSIMPL;
+import jakarta.servlet.ServletException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,42 +11,61 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/posts")
+@RequestMapping("/persona")
 public class Controlador {
 
     @Autowired
     private PSIMPL impl;
 
+    /*@GetMapping("/error")
+    public ResponseEntity<String> handleErrors(ServletException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ha ocurrido un error: " + ex.getMessage());
+    }*/
+
+    @ExceptionHandler(value = ServletException.class)
+    public ResponseEntity<String> handleServletException(ServletException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Se ha producido un error interno.");
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<String> localHost() {
+        String message = "Estas en el localhost para Spring Boot.";
+        System.out.println(message);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
+    }
+
     @GetMapping
-    @RequestMapping(value = "ConsultarPersonas", method = RequestMethod.GET)
+    @RequestMapping(value = "/consultarpersonas", method = RequestMethod.GET)
     public ResponseEntity<?> ConsultarPersonas() {
+        System.out.println("Consultar personas!");
         List<Persona> listaPersona = this.impl.consultarPersonas();
         return ResponseEntity.ok(listaPersona);
     }
 
-    @GetMapping
-    @RequestMapping(value = "CrearPersona", method = RequestMethod.POST)
+    @PostMapping
+    @RequestMapping(value = "/crear", method = RequestMethod.POST)
     public ResponseEntity<?> CrearPersona(@RequestBody Persona persona) {
+        System.out.println("Crear persona!");
         Persona personaCreada = this.impl.crearPersona(persona);
         return ResponseEntity.status(HttpStatus.CREATED).body(personaCreada);
     }
 
     @PutMapping
-    @RequestMapping(value = "ModificarPersona", method = RequestMethod.PUT)
+    @RequestMapping(value = "/modificar", method = RequestMethod.PUT)
     public ResponseEntity<?> ModificarPersona(@RequestBody Persona persona) {
         Persona personaCreada = this.impl.crearPersona(persona);
         return ResponseEntity.status(HttpStatus.CREATED).body(personaCreada);
     }
 
     @GetMapping
-    @RequestMapping(value = "BuscarPersona/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/buscar/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> BuscarPersona(@PathVariable int id) {
         Persona persona = this.impl.buscarPersona(id);
         return ResponseEntity.ok(persona);
     }
 
-    @GetMapping
-    @RequestMapping(value = "EliminarPersona/{id}", method = RequestMethod.GET)
+    @DeleteMapping
+    @RequestMapping(value = "/eliminar/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> EliminarPersona(@PathVariable int id) {
         this.impl.eliminarPersona(id);
         return ResponseEntity.ok().build();
