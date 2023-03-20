@@ -15,8 +15,29 @@ import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 
 
+/*
+/creartarjeta
+Crear tarjeta: numero de validacion: al azar 1 - 100 para poder enrolar la tarjeta
+Datos request:
+PAN: numero de tarjeta de 16 a 19 digitos
+titular
+cedula: 10 a 15 caracteres
+tipo: credito o debito
+telefono: 10 digitos
+Datos response:
+exito o fallido..
+
+/enrolartarjeta
+Datos request:
+PAN
+numero de validacion
+Datos response:
+00, 01, 02 mensaje exito, tarjeta no existe, numero de validacion invalido, pan enmascarado
+ */
+
+
 @Controller // @RestController
-@RequestMapping("/persona")
+@RequestMapping("/tarjeta")
 public class Controlador {
     private final ResourceLoader resourceLoader;
     public Controlador(ResourceLoader resourceLoader) {
@@ -63,33 +84,32 @@ public class Controlador {
     }
 
     @GetMapping
-    @RequestMapping(value = "/consultarpersonas", method = RequestMethod.GET)
-    public ResponseEntity<?> ConsultarPersonas() {
+    @RequestMapping(value = "/buscartarjetas", method = RequestMethod.GET)
+    public ResponseEntity<?> BuscarTarjetas() {
         List<Persona> listaPersona = this.psimpl.consultarPersonas();
-        System.out.println("Personas consultadas!");
+        System.out.println("Tarjetas buscadas!");
         return ResponseEntity.ok(listaPersona);
     }
 
     @PostMapping
     @RequestMapping(value = "/crear", method = RequestMethod.POST)
-    public ResponseEntity<?> CrearPersona() throws ParseException {
+    public ResponseEntity<?> CrearTarjeta() throws ParseException {
         Persona nuevaPersona = this.psimpl.crearPersona(new Persona()); // Guardar la entidad en la base de datos
         System.out.println("ultima matricula: " + PSIMPL.ultima_matricula);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaPersona); // Devuelve un estado 201 de creación exitosa
     }
 
-    @PutMapping
-    @RequestMapping(value = "/modificar", method = RequestMethod.PUT)
-    public ResponseEntity<?> ModificarPersona(@RequestBody Persona persona) throws ParseException {
-        Persona personaCreada = this.psimpl.crearPersona(persona);
-        return ResponseEntity.status(HttpStatus.CREATED).body(personaCreada);
-    }
-
     @GetMapping
-    @RequestMapping(value = "/buscar/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> BuscarPersona(@PathVariable int id) {
+    @RequestMapping(value = "/consultar/{id}", method = RequestMethod.GET)
+    public ResponseEntity<?> ConsultarTarjeta(@PathVariable int id) {
         Persona persona = this.psimpl.buscarPersona(id);
         return ResponseEntity.ok(persona);
+    }
+
+    @PostMapping
+    @RequestMapping(value = "/enrolar", method = RequestMethod.POST)
+    public ResponseEntity<?> enrolarTarjeta() {
+        return ResponseEntity.status(HttpStatus.CREATED).body(new Persona());
     }
 
     @DeleteMapping
@@ -98,6 +118,20 @@ public class Controlador {
         this.psimpl.eliminarPersona(id);
         return ResponseEntity.ok().build();
     }
+
+    public void CrearTransaccion(){
+
+    }
+    public void AnularTransaccion(){
+
+    }
+
+    /*@PutMapping
+    @RequestMapping(value = "/modificar", method = RequestMethod.PUT)
+    public ResponseEntity<?> ModificarPersona(@RequestBody Persona persona) throws ParseException {
+        Persona personaCreada = this.psimpl.crearPersona(persona);
+        return ResponseEntity.status(HttpStatus.CREATED).body(personaCreada);
+    }*/
 
     /*
         Period period = Period.of(1, 2, 3);
@@ -146,7 +180,4 @@ VALUES ('Hola NENES', 0.10, '2022-03-21', true);
 DELETE FROM usuarios WHERE matricula = 2;
 SELECT * FROM usuarios;
 TRUNCATE TABLE usuarios;
-
-
-
  */
