@@ -5,11 +5,11 @@ import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "tabla_de_vendedores") // Nombre de la tabla en la base de datos a la que esta asociada
+@Table(name = "usuarios") // Nombre de la tabla en la base de datos a la que esta asociada
 public class Persona {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "MATRICULA") // Nombre de la columna en la base de datos a la que esta asociada
+    @Column(name = "matricula") // Nombre de la columna en la base de datos a la que esta asociada
 
     private int matricula;
     private String nombre;
@@ -55,5 +55,10 @@ public class Persona {
 
     public void setDe_vacaciones(boolean de_vacaciones) {
         this.de_vacaciones = de_vacaciones;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
     }
 }
