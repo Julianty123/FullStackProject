@@ -5,26 +5,45 @@ import com.example.fullstackproject.Service.PersonaServiceIMPL.PSIMPL;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
 
 
-@RestController
+@Controller // @RestController
 @RequestMapping("/persona")
 public class Controlador {
+    private final ResourceLoader resourceLoader;
+    public Controlador(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
+    }
 
     @Autowired
     private PSIMPL psimpl;
+
 
     /*@GetMapping("/error")
     public ResponseEntity<String> handleErrors(ServletException ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ha ocurrido un error: " + ex.getMessage());
     }*/
+
+    @GetMapping("/index")
+    public String index() {
+        return "index.html";
+    }
+    /*
+    @GetMapping("/index")
+    public String home(Model model) throws IOException {
+        Resource resource = resourceLoader.getResource("classpath:/public/index.html");
+        model.addAttribute("content", new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8));
+        return "index.html";
+    }
+     */
 
     @ExceptionHandler(value = ServletException.class)
     public ResponseEntity<String> handleServletException(ServletException ex) {
@@ -109,3 +128,25 @@ public class Controlador {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No se encontró la entrada del blog."));
     }*/
 }
+
+/*
+USE jugos; // Seleccionar la base de datos
+// PRIMARY KEY significa que el valor es unico y no se puede repetir
+CREATE TABLE usuarios (
+    matricula INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50),
+    porcentaje_comision DECIMAL(5,2),
+    fecha_admision DATE,
+    de_vacaciones BOOLEAN
+);
+
+INSERT INTO usuarios (nombre, porcentaje_comision, fecha_admision, de_vacaciones)
+VALUES ('Hola NENES', 0.10, '2022-03-21', true);
+
+DELETE FROM usuarios WHERE matricula = 2;
+SELECT * FROM usuarios;
+TRUNCATE TABLE usuarios;
+
+
+
+ */
