@@ -1,4 +1,4 @@
-package com.example.fullstackproject.Entity;
+package com.example.fullstackproject;
 
 import jakarta.persistence.*;
 
@@ -6,7 +6,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "usuarios") // Nombre de la tabla en la base de datos a la que esta asociada
-public class Persona {
+public class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "matricula") // Nombre de la columna en la base de datos a la que esta asociada

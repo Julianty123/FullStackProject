@@ -24,12 +24,6 @@
 			<version>3.0.4</version>
 		</dependency>
 
-		<!-- https://stackoverflow.com/questions/60002080/spring-cannot-resolve-mvc-view-thymeleaf -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-thymeleaf</artifactId>
-		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -50,6 +44,13 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>8.0.32</version>
+		</dependency>
+
+		<!-- https://stackoverflow.com/questions/60002080/spring-cannot-resolve-mvc-view-thymeleaf -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+			<version>3.0.4</version>
 		</dependency>
 	</dependencies>
 

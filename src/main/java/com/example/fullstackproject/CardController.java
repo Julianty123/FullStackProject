@@ -1,14 +1,12 @@
-package com.example.fullstackproject.Controller;
+package com.example.fullstackproject;
 
-import com.example.fullstackproject.Entity.Persona;
-import com.example.fullstackproject.Service.PersonaServiceIMPL.PSIMPL;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.text.ParseException;
 import java.util.List;
@@ -35,14 +33,12 @@ Datos response:
 00, 01, 02 mensaje exito, tarjeta no existe, numero de validacion invalido, pan enmascarado
  */
 
+// https://github.com/codejava-official/spring-boot-form-thymeleaf
 
-@Controller // @RestController
+@Controller
+// @RestController
 @RequestMapping("/tarjeta")
-public class Controlador {
-    private final ResourceLoader resourceLoader;
-    public Controlador(ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
-    }
+public class CardController {
 
     @Autowired
     private PSIMPL psimpl;
@@ -55,16 +51,17 @@ public class Controlador {
 
     @GetMapping("/index")
     public String index() {
-        return "index.html";
+        return "index";
     }
-    /*
-    @GetMapping("/index")
-    public String home(Model model) throws IOException {
-        Resource resource = resourceLoader.getResource("classpath:/public/index.html");
-        model.addAttribute("content", new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8));
-        return "index.html";
+
+    @GetMapping
+    @RequestMapping(value = "/mostrartarjetas", method = RequestMethod.GET)
+    public String MostrarTarjetas(Model model) {
+        List<Card> listCards = this.psimpl.consultarPersonas();
+        System.out.println("Tarjetas mostradas!");
+        model.addAttribute("listCards", listCards);
+        return "cards"; // cards.html
     }
-     */
 
     @ExceptionHandler(value = ServletException.class)
     public ResponseEntity<String> handleServletException(ServletException ex) {
@@ -83,33 +80,25 @@ public class Controlador {
         System.out.println("Error: " + e.getMessage());
     }
 
-    @GetMapping
-    @RequestMapping(value = "/buscartarjetas", method = RequestMethod.GET)
-    public ResponseEntity<?> BuscarTarjetas() {
-        List<Persona> listaPersona = this.psimpl.consultarPersonas();
-        System.out.println("Tarjetas buscadas!");
-        return ResponseEntity.ok(listaPersona);
-    }
-
     @PostMapping
     @RequestMapping(value = "/crear", method = RequestMethod.POST)
     public ResponseEntity<?> CrearTarjeta() throws ParseException {
-        Persona nuevaPersona = this.psimpl.crearPersona(new Persona()); // Guardar la entidad en la base de datos
+        Card nuevaCard = this.psimpl.crearPersona(new Card()); // Guardar la entidad en la base de datos
         System.out.println("ultima matricula: " + PSIMPL.ultima_matricula);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevaPersona); // Devuelve un estado 201 de creación exitosa
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevaCard); // Devuelve un estado 201 de creación exitosa
     }
 
     @GetMapping
     @RequestMapping(value = "/consultar/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> ConsultarTarjeta(@PathVariable int id) {
-        Persona persona = this.psimpl.buscarPersona(id);
-        return ResponseEntity.ok(persona);
+        Card card = this.psimpl.buscarPersona(id);
+        return ResponseEntity.ok(card);
     }
 
     @PostMapping
     @RequestMapping(value = "/enrolar", method = RequestMethod.POST)
     public ResponseEntity<?> enrolarTarjeta() {
-        return ResponseEntity.status(HttpStatus.CREATED).body(new Persona());
+        return ResponseEntity.status(HttpStatus.CREATED).body(new Card());
     }
 
     @DeleteMapping

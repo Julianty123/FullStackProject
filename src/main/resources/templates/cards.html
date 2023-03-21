@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Manage Users</title>
+  <link rel="stylesheet" href="/css/cards.css">
+</head>
+<body>
+<div class="container-fluid text-center">
+  <div><h2>Administrar tarjetas</h2></div>
+  <div class="m-2">
+    <a class="h3" th:href="@{/cards/new}">Agregar nueva tarjeta</a>
+  </div>
+
+  <div>
+    <table class="table table-bordered">
+      <thead class="thead-dark">
+      <tr>
+        <th>Matrícula</th>
+        <th>Nombre</th>
+        <th>Porcentaje de comisión</th>
+        <th>Fecha de admisión</th>
+        <th>De vacaciones?</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <th:block th:each="card : ${listCards}">
+        <tr>
+          <td>[[${card.matricula}]]</td> <!-- Muestra las matriculas -->
+          <td>[[${card.nombre}]]</td>
+          <td>[[${card.porcentaje_comision}]]</td>
+          <td>[[${card.fecha_admision}]]</td>
+          <td>[[${card.de_vacaciones}]]</td>
+          <td>
+            <a class="h4 mr-3" th:href="@{'/users/edit/' + ${card.matricula}}">Edit</a>
+            <a class="h4" th:href="@{'/users/delete/' + ${card.matricula}}">Delete</a>
+          </td>
+        </tr>
+      </th:block>
+
+      </tbody>
+    </table>
+
+  </div>
+</div>
+</body>
+</html>

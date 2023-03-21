@@ -1,0 +1,106 @@
+/* Estilo para el encabezado de la página */
+h2 {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+    color: #fff;
+    letter-spacing: 0.2rem;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilo para el enlace "Add New User" */
+a {
+    display: inline-block;
+    background-color: #00d8ff;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    text-decoration: none;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease-in-out;
+}
+
+a:hover {
+    background-color: #00b4d8;
+}
+
+/* Estilo para la tabla */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 2rem;
+}
+
+th,
+td {
+    padding: 1rem;
+    text-align: left;
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: #fff;
+}
+
+th {
+    background-color: #00d8ff;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: #212529;
+}
+
+/* Estilo para los botones Edit y Delete */
+td a {
+    display: inline-block;
+    margin-right: 1rem;
+    background-color: #00b4d8;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+}
+
+td a:hover {
+    background-color: #0077b6;
+}
+
+/* Estilo para los botones de estado "De vacaciones" */
+td:nth-child(5) {
+    position: relative;
+}
+
+td:nth-child(5)::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #c8d6e5;
+}
+
+td:nth-child(5).vacations::before {
+    background-color: #55efc4;
+}
+
+/* Estilo para el contenedor principal */
+.container-fluid {
+    background-color: #2c3e50;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Estilo para la página completa */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+}
