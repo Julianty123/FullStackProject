@@ -168,5 +168,6 @@ VALUES ('Hola NENES', 0.10, '2022-03-21', true);
 
 DELETE FROM usuarios WHERE matricula = 2;
 SELECT * FROM usuarios;
+DROP TABLE usuarios;
 TRUNCATE TABLE usuarios;
  */
