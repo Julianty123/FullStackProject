@@ -31,7 +31,7 @@ public class PSIMPL implements CardService {
         // Crear una instancia de Persona con los datos que se desean insertar en la base de datos
         // Persona nuevaPersona = new Persona();
         // ThreadLocalRandom.current().nextInt(100)
-        Scanner sc = new Scanner(System.in);
+        /*Scanner sc = new Scanner(System.in);
         System.out.print("Ingrese el nombre: ");
         String nombre = sc.nextLine();
         nuevaCard.setNombre(nombre);
@@ -55,7 +55,7 @@ public class PSIMPL implements CardService {
                 + nuevaCard.getFecha_admision() + " " + nuevaCard.isDe_vacaciones());
 
         nuevaCard = this.cardRepository.save(nuevaCard);
-        ultima_matricula = this.cardRepository.save(nuevaCard).getMatricula();
+        ultima_matricula = this.cardRepository.save(nuevaCard).getMatricula();*/
         return nuevaCard;
     }
 

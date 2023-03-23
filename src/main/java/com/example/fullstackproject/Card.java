@@ -2,59 +2,79 @@ package com.example.fullstackproject;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
-
 @Entity
-@Table(name = "usuarios") // Nombre de la tabla en la base de datos a la que esta asociada
+@Table(name = "cards") // Nombre de la tabla en la base de datos a la que esta asociada
 public class Card {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "matricula") // Nombre de la columna en la base de datos a la que esta asociada
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Genera el valor de forma automática
+    private int id;
 
-    private int matricula;
-    private String nombre;
-    private double porcentaje_comision;
-    private Date fecha_admision;
-    private boolean de_vacaciones;
+    // @Column(name = "numeroValidacion", unique = true) // Nombre de la columna en la base de datos a la que esta asociada
+    private int numero_validacion;
 
-    public int getMatricula() {
-        return matricula;
+    private long numero_tarjeta;
+
+    private String titular;
+    private long cedula;
+    private String tipo;
+    private int telefono;
+
+    // getters y setters
+
+    public int getId() {
+        return id;
     }
 
-    public void setMatricula(int matricula) {
-        this.matricula = matricula;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getNombre() {
-        return nombre;
+    public int getNumero_validacion() {
+        return numero_validacion;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setNumero_validacion(int numeroValidacion) {
+        this.numero_validacion = numeroValidacion;
     }
 
-    public double getPorcentaje_comision() {
-        return porcentaje_comision;
+    public long getNumero_tarjeta() {
+        return numero_tarjeta;
     }
 
-    public void setPorcentaje_comision(double porcentaje_comision) {
-        this.porcentaje_comision = porcentaje_comision;
+    public void setNumero_tarjeta(long numeroTarjeta) {
+        this.numero_tarjeta = numeroTarjeta;
     }
 
-    public Date getFecha_admision() {
-        return fecha_admision;
+    public String getTitular() {
+        return titular;
     }
 
-    public void setFecha_admision(Date fecha_admision) {
-        this.fecha_admision = fecha_admision;
+    public void setTitular(String titular) {
+        this.titular = titular;
     }
 
-    public boolean isDe_vacaciones() {
-        return de_vacaciones;
+    public long getCedula() {
+        return cedula;
     }
 
-    public void setDe_vacaciones(boolean de_vacaciones) {
-        this.de_vacaciones = de_vacaciones;
+    public void setCedula(long cedula) {
+        this.cedula = cedula;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public int getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(int telefono) {
+        this.telefono = telefono;
     }
 
     @Override
@@ -62,3 +82,26 @@ public class Card {
         return super.toString();
     }
 }
+
+/*
+public CardTest(int numeroValidacion, long numeroTarjeta, String titular, long cedula, String tipo, int telefono) {
+        if (numeroValidacion < 1 || numeroValidacion > 100) {
+            throw new IllegalArgumentException("El número de validación debe estar entre 1 y 100.");
+        }
+        this.numeroValidacion = numeroValidacion;
+        if (String.valueOf(numeroTarjeta).length() < 16 || String.valueOf(numeroTarjeta).length() > 19) {
+            throw new IllegalArgumentException("El número de tarjeta debe tener entre 16 y 19 dígitos.");
+        }
+        this.numeroTarjeta = numeroTarjeta;
+        this.titular = titular;
+        if (String.valueOf(cedula).length() < 10 || String.valueOf(cedula).length() > 15) {
+            throw new IllegalArgumentException("La cédula debe tener entre 10 y 15 caracteres.");
+        }
+        this.cedula = cedula;
+        this.tipo = tipo;
+        if (String.valueOf(telefono).length() != 10) {
+            throw new IllegalArgumentException("El teléfono debe tener 10 dígitos.");
+        }
+        this.telefono = telefono;
+    }
+ */

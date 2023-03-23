@@ -155,16 +155,19 @@ public class CardController {
 /*
 USE jugos; // Seleccionar la base de datos
 // PRIMARY KEY significa que el valor es unico y no se puede repetir
-CREATE TABLE usuarios (
-    matricula INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(50),
-    porcentaje_comision DECIMAL(5,2),
-    fecha_admision DATE,
-    de_vacaciones BOOLEAN
+
+CREATE TABLE cards (
+id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+numero_validacion INT NOT NULL UNIQUE,
+numero_tarjeta BIGINT NOT NULL UNIQUE,
+titular VARCHAR(255) NOT NULL,
+cedula BIGINT NOT NULL,
+tipo VARCHAR(255) NOT NULL,
+telefono INT NOT NULL
 );
 
-INSERT INTO usuarios (nombre, porcentaje_comision, fecha_admision, de_vacaciones)
-VALUES ('Hola NENES', 0.10, '2022-03-21', true);
+INSERT INTO cards (numero_validacion, numero_tarjeta, titular, cedula, tipo, telefono)
+VALUES (99, 1111222233334444, 'Juan Perez', 12345678, 'Debito', 5551234);
 
 DELETE FROM usuarios WHERE matricula = 2;
 SELECT * FROM usuarios;

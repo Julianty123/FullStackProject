@@ -27,14 +27,14 @@
       <tbody>
       <th:block th:each="card : ${listCards}">
         <tr>
-          <td>[[${card.matricula}]]</td> <!-- Muestra las matriculas -->
-          <td>[[${card.nombre}]]</td>
-          <td>[[${card.porcentaje_comision}]]</td>
-          <td>[[${card.fecha_admision}]]</td>
-          <td>[[${card.de_vacaciones}]]</td>
+          <td>[[${card.numero_tarjeta}]]</td> <!-- Muestra las matriculas -->
+          <td>[[${card.numero_validacion}]]</td>
+          <td>[[${card.titular}]]</td>
+          <td>[[${card.cedula}]]</td>
+          <td>[[${card.tipo}]]</td>
           <td>
-            <a class="h4 mr-3" th:href="@{'/users/edit/' + ${card.matricula}}">Edit</a>
-            <a class="h4" th:href="@{'/users/delete/' + ${card.matricula}}">Delete</a>
+            <a class="h4 mr-3" th:href="@{'/users/edit/' + ${card.numero_tarjeta}}">Edit</a>
+            <a class="h4" th:href="@{'/users/delete/' + ${card.numero_validacion}}">Delete</a>
           </td>
         </tr>
       </th:block>

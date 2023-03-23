@@ -7,6 +7,6 @@ public interface CardRepository extends CrudRepository<Card, Integer> { //extend
     /* Define una Query personalizada
     @Query("SELECT p FROM Persona p WHERE p.matricula = :matricula")
     public Persona findByMatricula(@Param("matricula") int matricula);
-     */
+    */
 }
 
