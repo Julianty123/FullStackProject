@@ -12,7 +12,7 @@ import java.util.Scanner;
 public class PSIMPL implements CardService {
 
     public static int ultima_tarjeta;
-    private final CardRepository cardRepository;
+    public static CardRepository cardRepository;
 
     @Autowired
     public PSIMPL(CardRepository cardRepository) {

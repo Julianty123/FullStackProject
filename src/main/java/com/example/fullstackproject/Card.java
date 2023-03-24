@@ -2,6 +2,9 @@ package com.example.fullstackproject;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Entity
@@ -36,8 +39,19 @@ public class Card {
     }
 
     public void setNumero_validacion() {
-        // Es necesario validar si el numero de validacion ya existe en la base de datos
         this.numero_validacion = ThreadLocalRandom.current().nextInt(100);
+
+        // Valida si el numero ya existe en la base de datos
+        List<Card> cardList = (List<Card>) PSIMPL.cardRepository.findAll();
+        Set<Integer> usedValidationNumbers = new HashSet<>();
+        for (int i = 0; i < cardList.size(); i++) {
+            System.out.println(cardList.get(i).getNumero_validacion());
+            usedValidationNumbers.add(cardList.get(i).getNumero_validacion());
+        }
+        while (usedValidationNumbers.contains(this.numero_validacion)) {
+            System.out.println("El numero de validacion ya existe, acontinuacion aparecera uno nuevo");
+            this.numero_validacion = ThreadLocalRandom.current().nextInt(100);
+        }
     }
 
     public long getNumero_tarjeta() {
