@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear tarjeta</title>
+    <!-- Solo funciona el / antes del css, porque es una ruta absoluta. NO funciona /../static/css/create.css -->
+    <link rel="stylesheet" href="/css/create.css">
+</head>
+    <body>
+        <h1>Registro de Tarjetas</h1>
+        <form action="/tarjeta/insertdb" method="POST">
+            <label for="numero_tarjeta">Numero de tarjeta:</label><br>
+            <input type="number" id="numero_tarjeta" name="numero_tarjeta"><br>
+
+            <label for="titular">Titular:</label><br>
+            <input type="text" id="titular" name="titular"><br>
+
+            <label for="cedula">Cedula:</label><br>
+            <input type="text" id="cedula" name="cedula"><br>
+
+            <label for="tipo">Tipo:</label><br>
+            <input type="text" id="tipo" name="tipo"><br> <!-- type="date" -->
+
+            <label for="telefono">Telefono:</label><br>
+            <input type="number" id="telefono" name="telefono"><br><br>
+
+            <input type="submit" value="Crear">
+        </form>
+    </body>
+</html>

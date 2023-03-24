@@ -49,9 +49,9 @@ public class CardController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ha ocurrido un error: " + ex.getMessage());
     }*/
 
-    @GetMapping("/index")
+    @GetMapping("/crear")
     public String index() {
-        return "index";
+        return "create";
     }
 
     @GetMapping
@@ -81,11 +81,15 @@ public class CardController {
     }
 
     @PostMapping
-    @RequestMapping(value = "/crear", method = RequestMethod.POST)
-    public ResponseEntity<?> CrearTarjeta() throws ParseException {
-        Card nuevaCard = this.psimpl.crearPersona(new Card()); // Guardar la entidad en la base de datos
-        System.out.println("ultima matricula: " + PSIMPL.ultima_matricula);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevaCard); // Devuelve un estado 201 de creación exitosa
+    @RequestMapping(value = "/insertdb", method = RequestMethod.POST)
+    public String CrearTarjeta(@ModelAttribute("card") Card card) throws ParseException {
+        card.setNumero_validacion(); // Se agrega el número de validación
+        System.out.println("numero_validacion: " + card.getNumero_validacion() +
+                " datos: " + card.getNumero_tarjeta() + " " + card.getTitular() +
+                " " + card.getCedula() + " " + card.getTipo() + " " + card.getTelefono());
+        this.psimpl.crearPersona(card); // Guardar la entidad en la base de datos
+        return "redirect:/tarjeta/mostrartarjetas"; // Redirecciona a la página de tarjetas
+        //return ResponseEntity.status(HttpStatus.CREATED).body(nuevaCard); // Devuelve un estado 201 de creación exitosa
     }
 
     @GetMapping

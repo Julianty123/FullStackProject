@@ -2,6 +2,8 @@ package com.example.fullstackproject;
 
 import jakarta.persistence.*;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 @Entity
 @Table(name = "cards") // Nombre de la tabla en la base de datos a la que esta asociada
 public class Card {
@@ -9,7 +11,7 @@ public class Card {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Genera el valor de forma automática
     private int id;
 
-    // @Column(name = "numeroValidacion", unique = true) // Nombre de la columna en la base de datos a la que esta asociada
+    @Column(name = "numero_validacion", unique = true) // Nombre de la columna en la base de datos a la que esta asociada
     private int numero_validacion;
 
     private long numero_tarjeta;
@@ -33,8 +35,9 @@ public class Card {
         return numero_validacion;
     }
 
-    public void setNumero_validacion(int numeroValidacion) {
-        this.numero_validacion = numeroValidacion;
+    public void setNumero_validacion() {
+        // Es necesario validar si el numero de validacion ya existe en la base de datos
+        this.numero_validacion = ThreadLocalRandom.current().nextInt(100);
     }
 
     public long getNumero_tarjeta() {
@@ -79,8 +82,9 @@ public class Card {
 
     @Override
     public String toString() {
-        return super.toString();
+        return "Card [numero_tarjeta=" + numero_tarjeta + ", titular=" + titular + ", cedula=" + cedula + ", tipo=" + tipo + ", telefono=" + telefono + "]";
     }
+
 }
 
 /*

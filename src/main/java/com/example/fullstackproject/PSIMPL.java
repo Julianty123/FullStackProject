@@ -4,8 +4,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -13,7 +11,7 @@ import java.util.Scanner;
 @Transactional
 public class PSIMPL implements CardService {
 
-    public static int ultima_matricula;
+    public static int ultima_tarjeta;
     private final CardRepository cardRepository;
 
     @Autowired
@@ -30,32 +28,32 @@ public class PSIMPL implements CardService {
     public Card crearPersona(Card nuevaCard) throws ParseException {
         // Crear una instancia de Persona con los datos que se desean insertar en la base de datos
         // Persona nuevaPersona = new Persona();
-        // ThreadLocalRandom.current().nextInt(100)
         /*Scanner sc = new Scanner(System.in);
-        System.out.print("Ingrese el nombre: ");
-        String nombre = sc.nextLine();
-        nuevaCard.setNombre(nombre);
+        nuevaCard.setNumero_validacion();
+        System.out.println("Numero de validacion: " + nuevaCard.getNumero_validacion());
 
-        System.out.print("Ingrese el porcentaje de comisión: ");
-        double comision = sc.nextDouble();
-        nuevaCard.setPorcentaje_comision(comision);
+        System.out.print("Numero tarjeta: ");
+        long numero = sc.nextLong();
+        nuevaCard.setNumero_tarjeta(numero);
 
-        System.out.print("Ingrese la fecha de admisión (en formato dd/mm/yyyy): ");
-        String fechaString = sc.next();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        Date fechaAdmision = sdf.parse(fechaString);
-        nuevaCard.setFecha_admision(fechaAdmision);
+        System.out.print("Titular: ");
+        String comision = sc.next();
+        nuevaCard.setTitular(comision);
 
-        System.out.print("¿La persona está de vacaciones? (true/false): ");
-        boolean vacaciones = sc.nextBoolean();
-        nuevaCard.setDe_vacaciones(vacaciones);
+        System.out.print("Cedula: ");
+        long cedula = sc.nextLong();
+        nuevaCard.setCedula(cedula);
 
-        System.out.println("Persona creada: " + nuevaCard.getMatricula() + " "
-                + nuevaCard.getNombre() + " " + nuevaCard.getPorcentaje_comision() + " "
-                + nuevaCard.getFecha_admision() + " " + nuevaCard.isDe_vacaciones());
+        System.out.print("Tipo: ");
+        String tipo = sc.next();
+        nuevaCard.setTipo(tipo);
+
+        System.out.print("Telefono: ");
+        int telefono = sc.nextInt();
+        nuevaCard.setCedula(telefono);*/
 
         nuevaCard = this.cardRepository.save(nuevaCard);
-        ultima_matricula = this.cardRepository.save(nuevaCard).getMatricula();*/
+        // ultima_tarjeta = this.cardRepository.save(nuevaCard).getMatricula();
         return nuevaCard;
     }
 

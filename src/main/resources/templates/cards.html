@@ -2,36 +2,35 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Manage Users</title>
+  <title>Administracion de tarjetas</title>
   <link rel="stylesheet" href="/css/cards.css">
 </head>
 <body>
 <div class="container-fluid text-center">
   <div><h2>Administrar tarjetas</h2></div>
   <div class="m-2">
-    <a class="h3" th:href="@{/cards/new}">Agregar nueva tarjeta</a>
+    <a class="h3" th:href="@{/tarjeta/crear}">Agregar nueva tarjeta</a>
   </div>
 
   <div>
     <table class="table table-bordered">
       <thead class="thead-dark">
       <tr>
-        <th>Matrícula</th>
-        <th>Nombre</th>
-        <th>Porcentaje de comisión</th>
-        <th>Fecha de admisión</th>
-        <th>De vacaciones?</th>
-        <th></th>
+        <th>Numero de tarjeta</th>
+        <th>Titular</th>
+        <th>Cedula</th>
+        <th>Tipo</th>
+        <th>Telefono</th>
       </tr>
       </thead>
       <tbody>
       <th:block th:each="card : ${listCards}">
         <tr>
           <td>[[${card.numero_tarjeta}]]</td> <!-- Muestra las matriculas -->
-          <td>[[${card.numero_validacion}]]</td>
           <td>[[${card.titular}]]</td>
           <td>[[${card.cedula}]]</td>
           <td>[[${card.tipo}]]</td>
+          <td>[[${card.telefono}]]</td>
           <td>
             <a class="h4 mr-3" th:href="@{'/users/edit/' + ${card.numero_tarjeta}}">Edit</a>
             <a class="h4" th:href="@{'/users/delete/' + ${card.numero_validacion}}">Delete</a>
