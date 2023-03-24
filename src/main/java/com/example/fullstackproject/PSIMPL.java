@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.text.ParseException;
 import java.util.List;
-import java.util.Scanner;
 
 @Service
 @Transactional
@@ -20,8 +19,13 @@ public class PSIMPL implements CardService {
     }
 
     @Override
-    public List<Card> consultarPersonas() {
+    public List<Card> consultarTarjetas() {
         return (List<Card>) this.cardRepository.findAll();
+    }
+
+    @Override
+    public void actualizarTarjeta(int numero_validacion, long numero_tarjeta) {
+        cardRepository.update(numero_validacion, numero_tarjeta);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.example.fullstackproject;
 
 import jakarta.persistence.*;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -41,7 +40,7 @@ public class Card {
     public void setNumero_validacion() {
         this.numero_validacion = ThreadLocalRandom.current().nextInt(100);
 
-        // Valida si el numero ya existe en la base de datos
+        // Verifica si el numero de validacion ya existe en la base de datos
         List<Card> cardList = (List<Card>) PSIMPL.cardRepository.findAll();
         Set<Integer> usedValidationNumbers = new HashSet<>();
         for (int i = 0; i < cardList.size(); i++) {
@@ -49,8 +48,9 @@ public class Card {
             usedValidationNumbers.add(cardList.get(i).getNumero_validacion());
         }
         while (usedValidationNumbers.contains(this.numero_validacion)) {
-            System.out.println("El numero de validacion ya existe, acontinuacion aparecera uno nuevo");
+            System.out.printf("El numero de validacion ya existe (%d)\n", this.numero_validacion);
             this.numero_validacion = ThreadLocalRandom.current().nextInt(100);
+            System.out.printf("Se ha generado un nuevo numero de validacion: %d\n", this.numero_validacion);
         }
     }
 
@@ -96,9 +96,10 @@ public class Card {
 
     @Override
     public String toString() {
-        return "Card [numero_tarjeta=" + numero_tarjeta + ", titular=" + titular + ", cedula=" + cedula + ", tipo=" + tipo + ", telefono=" + telefono + "]";
+        return String.format(
+                "Card[numero_validacion='%d', numero_tarjeta='%d', titular='%s', cedula='%d', tipo='%s', telefono='%d']",
+                numero_validacion, numero_tarjeta, titular, cedula, tipo, telefono);
     }
-
 }
 
 /*

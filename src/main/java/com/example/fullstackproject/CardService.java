@@ -8,7 +8,9 @@ import java.util.List;
 @Service
 public interface CardService {
 
-    public List<Card> consultarPersonas();
+    public List<Card> consultarTarjetas();
+
+    void actualizarTarjeta(int numero_validacion, long numero_tarjeta);
 
     public Card crearPersona(Card card) throws ParseException;
 

@@ -50,14 +50,14 @@ public class CardController {
     }*/
 
     @GetMapping("/crear")
-    public String index() {
+    public String crear() {
         return "create";
     }
 
     @GetMapping
     @RequestMapping(value = "/mostrartarjetas", method = RequestMethod.GET)
     public String MostrarTarjetas(Model model) {
-        List<Card> listCards = this.psimpl.consultarPersonas();
+        List<Card> listCards = this.psimpl.consultarTarjetas();
         System.out.println("Tarjetas mostradas!");
         model.addAttribute("listCards", listCards);
         return "cards"; // cards.html
@@ -81,15 +81,26 @@ public class CardController {
     }
 
     @PostMapping
-    @RequestMapping(value = "/insertdb", method = RequestMethod.POST)
+    @RequestMapping(value = "/insertcard", method = RequestMethod.POST)
     public String CrearTarjeta(@ModelAttribute("card") Card card) throws ParseException {
         card.setNumero_validacion(); // Se agrega el número de validación
-        System.out.println("numero_validacion: " + card.getNumero_validacion() +
-                " datos: " + card.getNumero_tarjeta() + " " + card.getTitular() +
-                " " + card.getCedula() + " " + card.getTipo() + " " + card.getTelefono());
-        this.psimpl.crearPersona(card); // Guardar la entidad en la base de datos
+        System.out.println("Tarjeta creada: " + card);
+        this.psimpl.crearPersona(card); // Guarda la entidad en la base de datos
         return "redirect:/tarjeta/mostrartarjetas"; // Redirecciona a la página de tarjetas
         //return ResponseEntity.status(HttpStatus.CREATED).body(nuevaCard); // Devuelve un estado 201 de creación exitosa
+    }
+
+    @GetMapping
+    @RequestMapping(value = "/enrolar", method = RequestMethod.GET)
+    public String enrolarTarjeta() {
+        return "enroll";
+    }
+
+    @PostMapping
+    @RequestMapping(value = "/enrollcard", method = RequestMethod.POST)
+    public String EnrolarTarjeta(@ModelAttribute("card") Card card) throws ParseException {
+        this.psimpl.actualizarTarjeta(card.getNumero_validacion(), card.getNumero_tarjeta());
+        return "redirect:/tarjeta/mostrartarjetas"; // Redirecciona a la página de tarjetas
     }
 
     @GetMapping
@@ -97,12 +108,6 @@ public class CardController {
     public ResponseEntity<?> ConsultarTarjeta(@PathVariable int id) {
         Card card = this.psimpl.buscarPersona(id);
         return ResponseEntity.ok(card);
-    }
-
-    @PostMapping
-    @RequestMapping(value = "/enrolar", method = RequestMethod.POST)
-    public ResponseEntity<?> enrolarTarjeta() {
-        return ResponseEntity.status(HttpStatus.CREATED).body(new Card());
     }
 
     @DeleteMapping
