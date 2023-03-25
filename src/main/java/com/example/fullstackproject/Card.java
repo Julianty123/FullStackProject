@@ -13,7 +13,7 @@ public class Card {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Genera el valor de forma automática
     private int id;
 
-    @Column(name = "numero_validacion", unique = true) // Nombre de la columna en la base de datos a la que esta asociada
+    // @Column(name = "numero_validacion", unique = true) // Nombre de la columna en la base de datos a la que esta asociada
     private int numero_validacion;
 
     private long numero_tarjeta;
@@ -34,7 +34,7 @@ public class Card {
     }
 
     public int getNumero_validacion() {
-        return numero_validacion;
+        return this.numero_validacion;
     }
 
     public void setNumero_validacion() {

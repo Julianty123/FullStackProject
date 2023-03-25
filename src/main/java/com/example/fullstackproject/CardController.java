@@ -97,10 +97,11 @@ public class CardController {
     }
 
     @PostMapping
-    @RequestMapping(value = "/enrollcard", method = RequestMethod.POST)
-    public String EnrolarTarjeta(@ModelAttribute("card") Card card) throws ParseException {
-        this.psimpl.actualizarTarjeta(card.getNumero_validacion(), card.getNumero_tarjeta());
-        return "redirect:/tarjeta/mostrartarjetas"; // Redirecciona a la página de tarjetas
+    @RequestMapping(value = "/enrolledcard", method = RequestMethod.POST)
+    public String EnrolarTarjeta(HttpServletRequest request) { // Para obtener cualquier dato del request en el formulario HTML
+        System.out.println("numerovalidacion: " + request.getParameter("numero_validacion") + " numerotarjeta: " + request.getParameter("numero_tarjeta"));
+        throw new CustomException("Custom Exception, Im testing");
+        //return "redirect:/tarjeta/mostrartarjetas"; // Redirecciona a la página de tarjetas
     }
 
     @GetMapping
