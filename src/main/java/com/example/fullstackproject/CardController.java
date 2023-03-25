@@ -160,26 +160,3 @@ public class CardController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No se encontró la entrada del blog."));
     }*/
 }
-
-/*
-USE jugos; // Seleccionar la base de datos
-// PRIMARY KEY significa que el valor es unico y no se puede repetir
-
-CREATE TABLE cards (
-id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-numero_validacion INT NOT NULL UNIQUE,
-numero_tarjeta BIGINT NOT NULL UNIQUE,
-titular VARCHAR(255) NOT NULL,
-cedula BIGINT NOT NULL,
-tipo VARCHAR(255) NOT NULL,
-telefono INT NOT NULL
-);
-
-INSERT INTO cards (numero_validacion, numero_tarjeta, titular, cedula, tipo, telefono)
-VALUES (99, 1111222233334444, 'Juan Perez', 12345678, 'Debito', 5551234);
-
-DELETE FROM usuarios WHERE matricula = 2;
-SELECT * FROM usuarios;
-DROP TABLE usuarios;
-TRUNCATE TABLE usuarios;
- */
