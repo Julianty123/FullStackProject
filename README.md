@@ -17,24 +17,31 @@ USE cards;
 
 # Crea una tabla
 CREATE TABLE cards (
-id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-numero_validacion INT NOT NULL UNIQUE,
-numero_tarjeta BIGINT NOT NULL UNIQUE,
-titular VARCHAR(255) NOT NULL,
-cedula BIGINT NOT NULL,
-tipo VARCHAR(255) NOT NULL,
-telefono INT NOT NULL
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    numero_validacion INT NOT NULL UNIQUE,
+    numero_tarjeta BIGINT NOT NULL UNIQUE,
+    titular VARCHAR(255) NOT NULL,
+    cedula BIGINT NOT NULL,
+    tipo VARCHAR(255) NOT NULL,
+    telefono INT NOT NULL,
+    enrolada boolean
 );
 
 # Inserta datos en la tabla
-INSERT INTO cards (numero_validacion, numero_tarjeta, titular, cedula, tipo, telefono)
-VALUES (99, 1111222233334444, 'Juan Perez', 12345678, 'Debito', 5551234);
+INSERT INTO cards (numero_validacion, numero_tarjeta, titular, cedula, tipo, telefono, enrolada)
+VALUES (99, 1111222233334444, 'Juan Perez', 12345678, 'Debito', 5551234, false);
 
 # Selecciona las filas con el tipo de tarjeta especificado
 DELETE FROM cards WHERE tipo = DEFAULT;
 
 # Selecciona todos los datos de la tabla
 SELECT * FROM cards;
+
+# Agrega una columna a la tabla
+ALTER TABLE cards ADD COLUMN enrolada boolean;
+
+# Actualiza todos los datos de la columna especificada
+UPDATE cards SET enrolada = false;
 
 # Limpia la tabla
 TRUNCATE TABLE cards;

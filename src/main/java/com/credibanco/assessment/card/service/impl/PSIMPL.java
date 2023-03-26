@@ -1,9 +1,12 @@
-package com.example.fullstackproject;
+package com.credibanco.assessment.card.service.impl;
 
+import com.credibanco.assessment.card.CardRepository;
+import com.credibanco.assessment.card.model.Card;
+import com.credibanco.assessment.card.service.CardService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.text.ParseException;
+
 import java.util.List;
 
 @Service
@@ -23,13 +26,10 @@ public class PSIMPL implements CardService {
         return (List<Card>) this.cardRepository.findAll();
     }
 
-    @Override
-    public void actualizarTarjeta(int numero_validacion, long numero_tarjeta) {
-        cardRepository.update(numero_validacion, numero_tarjeta);
-    }
+
 
     @Override
-    public Card crearPersona(Card nuevaCard) throws ParseException {
+    public void crearPersona(Card nuevaCard) {
         // Crear una instancia de Persona con los datos que se desean insertar en la base de datos
         // Persona nuevaPersona = new Persona();
         /*Scanner sc = new Scanner(System.in);
@@ -58,16 +58,15 @@ public class PSIMPL implements CardService {
 
         nuevaCard = this.cardRepository.save(nuevaCard);
         // ultima_tarjeta = this.cardRepository.save(nuevaCard).getMatricula();
-        return nuevaCard;
     }
 
     @Override
-    public Card modificarPersona(Card card) {
+    public Card modificarTarjeta(Card card) {
         return this.cardRepository.save(card);
     }
 
     @Override
-    public Card buscarPersona(int id) {
+    public Card buscarTarjeta(int id) {
         return this.cardRepository.findById(id).get(); // repo.findById(id).orElse(null)
     }
 

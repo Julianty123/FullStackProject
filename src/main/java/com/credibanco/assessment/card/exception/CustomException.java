@@ -1,4 +1,4 @@
-package com.example.fullstackproject;
+package com.credibanco.assessment.card.exception;
 
 public class CustomException extends RuntimeException {
 

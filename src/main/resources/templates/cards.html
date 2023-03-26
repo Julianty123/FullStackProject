@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Administracion de tarjetas</title>
+  <!-- -->
   <link rel="stylesheet" href="/css/cards.css">
 </head>
 <body>
@@ -21,19 +22,21 @@
         <th>Cedula</th>
         <th>Tipo</th>
         <th>Telefono</th>
+        <th>Enrolada</th>
       </tr>
       </thead>
       <tbody>
-        <th:block th:each="card : ${listCards}">
+        <th:block th:each="card : ${listMaskeds}">
           <tr>
-            <td>[[${card.numero_tarjeta}]]</td> <!-- Muestra las matriculas -->
-            <td>[[${card.titular}]]</td>
+            <td>[[${card.numero_tarjetaEnmascarado}]]</td> <!-- Muestra el numero de la tarjeta enmascarado -->
+            <td>[[${card.titular}]]</td> <!-- [[${card.numero_tarjeta}+ 'works']] [[${card.titular.substring(0, 2) + "works"}]]-->
             <td>[[${card.cedula}]]</td>
             <td>[[${card.tipo}]]</td>
             <td>[[${card.telefono}]]</td>
+            <td>[[${card.enrolada}]]</td>
             <td>
-              <a class="h4 mr-3" th:href="@{'/users/edit/' + ${card.numero_tarjeta}}">Edit</a>
-              <a class="h4" th:href="@{'/users/delete/' + ${card.numero_validacion}}">Delete</a>
+              <a class="h4 mr-3" th:href="@{'/tarjeta/edit/' + ${card.numero_tarjeta}}">Edit</a>
+              <a class="h4" th:href="@{'/tarjeta/delete/' + ${card.numero_validacion}}">Delete</a>
             </td>
           </tr>
         </th:block>

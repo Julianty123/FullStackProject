@@ -1,5 +1,6 @@
-package com.example.fullstackproject;
+package com.credibanco.assessment.card.model;
 
+import com.credibanco.assessment.card.service.impl.PSIMPL;
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.List;
@@ -22,9 +23,9 @@ public class Card {
     private long cedula;
     private String tipo;
     private int telefono;
+    private boolean enrolada;
 
     // getters y setters
-
     public int getId() {
         return id;
     }
@@ -94,11 +95,19 @@ public class Card {
         this.telefono = telefono;
     }
 
+    public boolean isEnrolada() {
+        return enrolada;
+    }
+
+    public void setEnrolada(boolean enrolada) {
+        this.enrolada = enrolada;
+    }
+
     @Override
     public String toString() {
         return String.format(
-                "Card[numero_validacion='%d', numero_tarjeta='%d', titular='%s', cedula='%d', tipo='%s', telefono='%d']",
-                numero_validacion, numero_tarjeta, titular, cedula, tipo, telefono);
+                "Card[numero_validacion='%d', numero_tarjeta='%d', titular='%s', cedula='%d', tipo='%s', telefono='%d', enrolada='%b']\n",
+                numero_validacion, numero_tarjeta, titular, cedula, tipo, telefono, enrolada);
     }
 }
 
