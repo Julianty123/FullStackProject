@@ -12,57 +12,26 @@ import java.util.List;
 @Service
 @Transactional
 public class PSIMPL implements CardService {
-
-    public static int ultima_tarjeta;
     public static CardRepository cardRepository;
 
     @Autowired
     public PSIMPL(CardRepository cardRepository) {
-        this.cardRepository = cardRepository;
+        PSIMPL.cardRepository = cardRepository;
     }
 
     @Override
     public List<Card> consultarTarjetas() {
-        return (List<Card>) this.cardRepository.findAll();
+        return (List<Card>) cardRepository.findAll();
     }
-
-
 
     @Override
     public void crearPersona(Card nuevaCard) {
-        // Crear una instancia de Persona con los datos que se desean insertar en la base de datos
-        // Persona nuevaPersona = new Persona();
-        /*Scanner sc = new Scanner(System.in);
-        nuevaCard.setNumero_validacion();
-        System.out.println("Numero de validacion: " + nuevaCard.getNumero_validacion());
-
-        System.out.print("Numero tarjeta: ");
-        long numero = sc.nextLong();
-        nuevaCard.setNumero_tarjeta(numero);
-
-        System.out.print("Titular: ");
-        String comision = sc.next();
-        nuevaCard.setTitular(comision);
-
-        System.out.print("Cedula: ");
-        long cedula = sc.nextLong();
-        nuevaCard.setCedula(cedula);
-
-        System.out.print("Tipo: ");
-        String tipo = sc.next();
-        nuevaCard.setTipo(tipo);
-
-        System.out.print("Telefono: ");
-        int telefono = sc.nextInt();
-        nuevaCard.setCedula(telefono);*/
-
-        nuevaCard = this.cardRepository.save(nuevaCard);
-        // ultima_tarjeta = this.cardRepository.save(nuevaCard).getMatricula();
+        cardRepository.save(nuevaCard);    // Guarda la entidad en la base de datos
     }
 
     @Override
     public Card modificarTarjeta(Card card) {
-        return this.cardRepository.save(card);
+        return cardRepository.save(card);
     }
 
     @Override

@@ -4,16 +4,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
-@ControllerAdvice
+//@ControllerAdvice
 public class CustomExceptionHandler {
 
-    @ExceptionHandler(CustomException.class)
+    /*@ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<Object> handleCustomException(CustomException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        System.out.println(ex.getMessage());
+        return new ResponseEntity<>("Hello world, exception tested!", HttpStatus.BAD_REQUEST);
     }
 
-    /*
     @ExceptionHandler()
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody

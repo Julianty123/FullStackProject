@@ -7,18 +7,22 @@ import com.credibanco.assessment.card.service.impl.PSIMPL;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 /*
@@ -41,12 +45,14 @@ Datos response:
 00, 01, 02 mensaje exito, tarjeta no existe, numero de validacion invalido, pan enmascarado
  */
 
-// https://github.com/codejava-official/spring-boot-form-thymeleaf
+// https://github.com/codejava-official/spring-boot-crud-intellij
 
 @Controller
 // @RestController
 @RequestMapping("/tarjeta")
-public class CardController {
+public class CardController{
+
+    public static JdbcTemplate jdbcTemplate;
 
     private final PSIMPL psimpl;
 
@@ -65,21 +71,37 @@ public class CardController {
         return "create";    // create.html
     }
 
+    @GetMapping("/eliminar/{numero_validacion}")
+    public String deleteUser(@PathVariable("numero_validacion") int numero_validacion, RedirectAttributes ra) {
+        PSIMPL.cardRepository.deleteByNumeroValidacion(numero_validacion);
+        System.out.println("Se ha eliminado la tarjeta, 00");
+        return "redirect:/tarjeta/mostrartarjetas";
+    }
+
     @PostMapping
     @RequestMapping(value = "/insertcard", method = RequestMethod.POST)
     public String CrearTarjeta(@ModelAttribute("card") Card card) {
         card.setNumero_validacion(); // Se agrega el número de validación
+        this.psimpl.crearPersona(card); // Crear una instancia de Persona con los datos para insertar en la base de datos
         System.out.println("Tarjeta creada: " + card);
-        this.psimpl.crearPersona(card); // Guarda la entidad en la base de datos
         return "redirect:/tarjeta/mostrartarjetas"; // Redirecciona a la página de tarjetas
         //return ResponseEntity.status(HttpStatus.CREATED).body(nuevaCard); // Devuelve un estado 201 de creación exitosa
     }
 
     @GetMapping
     @RequestMapping(value = "/consultar/{numero_tarjeta}", method = RequestMethod.GET)
-    public ResponseEntity<?> ConsultarTarjeta(@PathVariable int numero_tarjeta) {
+    public String ConsultarTarjeta(@PathVariable long numero_tarjeta, Model model) {
         Card card = PSIMPL.cardRepository.findByNumeroTarjeta(numero_tarjeta);
-        return ResponseEntity.ok(card);
+        System.out.println("Tarjeta consultada: " + card);
+        CardFrontEnd cardMasked = new CardFrontEnd();
+        cardMasked.setNumero_tarjetaEnmascarado(maskCreditCardNumber(String.valueOf(card.getNumero_tarjeta())));
+        cardMasked.setTitular(card.getTitular());
+        cardMasked.setCedula(card.getCedula());
+        cardMasked.setTipo(card.getTipo());
+        cardMasked.setTelefono(card.getTelefono());
+        cardMasked.setEnrolada(card.isEnrolada());
+        model.addAttribute("listMaskeds", cardMasked);
+        return "cards"; // cards.html
     }
 
     @GetMapping("/json")
@@ -96,6 +118,7 @@ public class CardController {
         // ciclo for con i
         for (int i = 0; i < listCards.size(); i++) {
             CardFrontEnd cardFrontEnd = new CardFrontEnd();
+            cardFrontEnd.setNumero_validacion(listCards.get(i).getNumero_validacion());
             cardFrontEnd.setNumero_tarjetaEnmascarado(maskCreditCardNumber(String.valueOf(listCards.get(i).getNumero_tarjeta())));
             cardFrontEnd.setTitular(listCards.get(i).getTitular());
             cardFrontEnd.setCedula(listCards.get(i).getCedula());
@@ -104,31 +127,16 @@ public class CardController {
             cardFrontEnd.setEnrolada(listCards.get(i).isEnrolada());
             listCardsMasked.add(cardFrontEnd);
         }
-        // model.addAttribute("listCards", listCards);
         model.addAttribute("listMaskeds", listCardsMasked);
         return "cards"; // cards.html
     }
-
-    /*public static String maskCreditCardNumber(String cardNumber) {
-        int length = cardNumber.length();
-        StringBuilder maskedNumber = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            char c = cardNumber.charAt(i);
-            if (i < length - 4 && Character.isDigit(c)) {
-                maskedNumber.append('*');
-            } else {
-                maskedNumber.append(c);
-            }
-        }
-        return maskedNumber.toString();
-    }*/
 
     public static String maskCreditCardNumber(String cardNumber) {
         int length = cardNumber.length();
         StringBuilder maskedNumber = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
             char c = cardNumber.charAt(i);
-            if (i < 6 || i > length - 5 && Character.isDigit(c)) {
+            if (i < 6 || i > length - 5 && Character.isDigit(c)) { // if (i < length - 4 && Character.isDigit(c))
                 maskedNumber.append(c);
             } else {
                 maskedNumber.append('*');
@@ -144,14 +152,17 @@ public class CardController {
 
     @GetMapping("/")
     public ResponseEntity<String> localHost() {
+        Randomizer();
         String message = "Estas en el localhost para Spring Boot.";
         System.out.println(message);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
     }
 
-    @ExceptionHandler(value = {Exception.class})
-    public void defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
-        System.out.println("Error: " + e.getMessage());
+    public static void Randomizer() {
+        long min = 1000000000L; // Mínimo valor de 10 dígitos
+        long max = 9999999999999999L; // Máximo valor de 16 dígitos
+        long randomNum = ThreadLocalRandom.current().nextLong(min, max + 1);
+        System.out.println("Número aleatorio generado: " + randomNum);
     }
 
     @GetMapping
@@ -163,33 +174,52 @@ public class CardController {
     @PostMapping
     @RequestMapping(value = "/enrolledcard", method = RequestMethod.POST)
     public String EnrolarTarjeta(HttpServletRequest request) { // Para obtener cualquier dato del request en el formulario HTML
-        int numeroValidacion = Integer.parseInt(request.getParameter("numero_validacion"));
-        long numeroTarjeta = Long.parseLong(request.getParameter("numero_tarjeta"));
+        int numero_validacion = Integer.parseInt(request.getParameter("numero_validacion"));
+        long numero_tarjeta = Long.parseLong(request.getParameter("numero_tarjeta"));
 
         List<Card> cardList = (List<Card>) PSIMPL.cardRepository.findAll();
         Set<Integer> usedValidationNumbers = new HashSet<>();
+        Set<Long> usedCardNumbers = new HashSet<>();
+        HashMap<Integer, Long> hashNumberValidationAndCard = new HashMap<>();
         for (int i = 0; i < cardList.size(); i++) {
             System.out.println(cardList.get(i).getNumero_validacion());
+            hashNumberValidationAndCard.put(cardList.get(i).getNumero_validacion(), cardList.get(i).getNumero_tarjeta());
             usedValidationNumbers.add(cardList.get(i).getNumero_validacion());
+            usedCardNumbers.add(cardList.get(i).getNumero_tarjeta());
         }
 
-        if(usedValidationNumbers.contains(numeroValidacion)){
-            PSIMPL.cardRepository.updateEnroll(numeroTarjeta, true);
-            System.out.println("La tarjeta ha sido enrolada!");
-            // throw new CustomException("00, Exito");
+        if(hashNumberValidationAndCard.containsKey(numero_validacion) &&
+                hashNumberValidationAndCard.get(numero_validacion) == numero_tarjeta){
+            PSIMPL.cardRepository.updateEnroll(numero_tarjeta, true);
+            System.out.println("00, Exito");
+            //  return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El número de validación debe estar entre 1 y 100.");
             return "redirect:/tarjeta/mostrartarjetas"; // Redirecciona a la página de tarjetas
         }
-        else{
-            throw new CustomException("02, Numero de validacion invalido");
-            // throw new CustomException("01, Tarjeta no existe");
+        else if (hashNumberValidationAndCard.get(numero_validacion) == null){
+            throw new CustomException("02, Numero de validacion incorrecto");
+        }
+        else {
+            throw new CustomException("01, Tarjeta no existe");
         }
     }
 
-    @DeleteMapping
-    @RequestMapping(value = "/eliminar/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> EliminarPersona(@PathVariable int id) {
-        this.psimpl.eliminarPersona(id);
-        return ResponseEntity.ok().build();
+    public static void insertDataInBatch(List<CardFrontEnd> dataList) {
+        String sql = "INSERT INTO data_table (id, name, age) VALUES (?, ?, ?)";
+        jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                CardFrontEnd cardFrontEnd = dataList.get(i);
+                ps.setInt(1, cardFrontEnd.getId());
+                ps.setString(2, cardFrontEnd.getNumero_tarjetaEnmascarado());
+                ps.setInt(3, cardFrontEnd.getNumero_validacion());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return dataList.size();
+            }
+        });
     }
 
     public void CrearTransaccion(){

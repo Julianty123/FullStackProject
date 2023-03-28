@@ -55,6 +55,11 @@ public class Card {
         }
     }
 
+    // Sobrecarga del método setNumero_validacion
+    public void setNumero_validacion(int numero_validacion) {
+        this.numero_validacion = numero_validacion;
+    }
+
     public long getNumero_tarjeta() {
         return numero_tarjeta;
     }
