@@ -1,6 +1,6 @@
 package com.credibanco.assessment.card.model;
 
-import com.credibanco.assessment.card.service.impl.PSIMPL;
+import com.credibanco.assessment.card.service.impl.PSIMPLcard;
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.List;
@@ -42,7 +42,7 @@ public class Card {
         this.numero_validacion = ThreadLocalRandom.current().nextInt(100);
 
         // Verifica si el numero de validacion ya existe en la base de datos
-        List<Card> cardList = (List<Card>) PSIMPL.cardRepository.findAll();
+        List<Card> cardList = (List<Card>) PSIMPLcard.cardRepository.findAll();
         Set<Integer> usedValidationNumbers = new HashSet<>();
         for (int i = 0; i < cardList.size(); i++) {
             System.out.println(cardList.get(i).getNumero_validacion());

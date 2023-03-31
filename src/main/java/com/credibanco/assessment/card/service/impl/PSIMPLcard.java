@@ -11,12 +11,12 @@ import java.util.List;
 
 @Service
 @Transactional
-public class PSIMPL implements CardService {
+public class PSIMPLcard implements CardService {
     public static CardRepository cardRepository;
 
     @Autowired
-    public PSIMPL(CardRepository cardRepository) {
-        PSIMPL.cardRepository = cardRepository;
+    public PSIMPLcard(CardRepository cardRepository) {
+        PSIMPLcard.cardRepository = cardRepository;
     }
 
     @Override
@@ -36,11 +36,11 @@ public class PSIMPL implements CardService {
 
     @Override
     public Card buscarTarjeta(int id) {
-        return this.cardRepository.findById(id).get(); // repo.findById(id).orElse(null)
+        return cardRepository.findById(id).get(); // repo.findById(id).orElse(null)
     }
 
     @Override
     public void eliminarPersona(int id) {
-        this.cardRepository.deleteById(id);
+        cardRepository.deleteById(id);
     }
 }

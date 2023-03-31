@@ -3,11 +3,13 @@ package com.credibanco.assessment.card.controller;
 import com.credibanco.assessment.card.exception.CustomException;
 import com.credibanco.assessment.card.model.Card;
 import com.credibanco.assessment.card.model.CardFrontEnd;
-import com.credibanco.assessment.card.service.impl.PSIMPL;
+import com.credibanco.assessment.card.model.Transaction;
+import com.credibanco.assessment.card.service.impl.PSIMPLcard;
+import com.credibanco.assessment.card.service.impl.PSIMPLtransaction;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -15,12 +17,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -52,13 +54,16 @@ Datos response:
 @RequestMapping("/tarjeta")
 public class CardController{
 
+    // Si no ocurre ninguna excepción en el metodo, se considera la transaccion aprobada automaticamente
+    public String estadoTransaccion;
+
     public static JdbcTemplate jdbcTemplate;
 
-    private final PSIMPL psimpl;
+    private final PSIMPLcard PSIMPLcard;
 
     @Autowired
-    public CardController(PSIMPL psimpl) {
-        this.psimpl = psimpl;
+    public CardController(PSIMPLcard PSIMPLcard) {
+        this.PSIMPLcard = PSIMPLcard;
     }
 
     /*@GetMapping("/error")
@@ -73,7 +78,7 @@ public class CardController{
 
     @GetMapping("/eliminar/{numero_validacion}")
     public String deleteUser(@PathVariable("numero_validacion") int numero_validacion, RedirectAttributes ra) {
-        PSIMPL.cardRepository.deleteByNumeroValidacion(numero_validacion);
+        PSIMPLcard.cardRepository.deleteByNumeroValidacion(numero_validacion);
         System.out.println("Se ha eliminado la tarjeta, 00");
         return "redirect:/tarjeta/mostrartarjetas";
     }
@@ -82,7 +87,7 @@ public class CardController{
     @RequestMapping(value = "/insertcard", method = RequestMethod.POST)
     public String CrearTarjeta(@ModelAttribute("card") Card card) {
         card.setNumero_validacion(); // Se agrega el número de validación
-        this.psimpl.crearPersona(card); // Crear una instancia de Persona con los datos para insertar en la base de datos
+        this.PSIMPLcard.crearPersona(card); // Crear una instancia de Persona con los datos para insertar en la base de datos
         System.out.println("Tarjeta creada: " + card);
         return "redirect:/tarjeta/mostrartarjetas"; // Redirecciona a la página de tarjetas
         //return ResponseEntity.status(HttpStatus.CREATED).body(nuevaCard); // Devuelve un estado 201 de creación exitosa
@@ -91,7 +96,7 @@ public class CardController{
     @GetMapping
     @RequestMapping(value = "/consultar/{numero_tarjeta}", method = RequestMethod.GET)
     public String ConsultarTarjeta(@PathVariable long numero_tarjeta, Model model) {
-        Card card = PSIMPL.cardRepository.findByNumeroTarjeta(numero_tarjeta);
+        Card card = PSIMPLcard.cardRepository.findByNumeroTarjeta(numero_tarjeta);
         System.out.println("Tarjeta consultada: " + card);
         CardFrontEnd cardMasked = new CardFrontEnd();
         cardMasked.setNumero_tarjetaEnmascarado(maskCreditCardNumber(String.valueOf(card.getNumero_tarjeta())));
@@ -106,14 +111,14 @@ public class CardController{
 
     @GetMapping("/json")
     public ResponseEntity<List<Card>> getCards() {
-        List<Card> listCards = this.psimpl.consultarTarjetas();
+        List<Card> listCards = this.PSIMPLcard.consultarTarjetas();
         return ResponseEntity.ok(listCards);
     }
 
     @GetMapping
     @RequestMapping(value = "/mostrartarjetas", method = RequestMethod.GET)
     public String MostrarTarjetas(Model model) {
-        List<Card> listCards = this.psimpl.consultarTarjetas();
+        List<Card> listCards = this.PSIMPLcard.consultarTarjetas();
         List<CardFrontEnd> listCardsMasked = new ArrayList<>();
         // ciclo for con i
         for (int i = 0; i < listCards.size(); i++) {
@@ -177,7 +182,7 @@ public class CardController{
         int numero_validacion = Integer.parseInt(request.getParameter("numero_validacion"));
         long numero_tarjeta = Long.parseLong(request.getParameter("numero_tarjeta"));
 
-        List<Card> cardList = (List<Card>) PSIMPL.cardRepository.findAll();
+        List<Card> cardList = (List<Card>) PSIMPLcard.cardRepository.findAll();
         Set<Integer> usedValidationNumbers = new HashSet<>();
         Set<Long> usedCardNumbers = new HashSet<>();
         HashMap<Integer, Long> hashNumberValidationAndCard = new HashMap<>();
@@ -190,7 +195,7 @@ public class CardController{
 
         if(hashNumberValidationAndCard.containsKey(numero_validacion) &&
                 hashNumberValidationAndCard.get(numero_validacion) == numero_tarjeta){
-            PSIMPL.cardRepository.updateEnroll(numero_tarjeta, true);
+            PSIMPLcard.cardRepository.updateEnroll(numero_tarjeta, true);
             System.out.println("00, Exito");
             //  return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El número de validación debe estar entre 1 y 100.");
             return "redirect:/tarjeta/mostrartarjetas"; // Redirecciona a la página de tarjetas
@@ -222,11 +227,68 @@ public class CardController{
         });
     }
 
-    public void CrearTransaccion(){
-
+    @GetMapping
+    @RequestMapping(value = "/transaccion", method = RequestMethod.GET)
+    public String HacerTransaccion() {
+        return "transaction";
     }
-    public void AnularTransaccion(){
 
+    /*
+    Con Transactional Spring automáticamente detecta una excepción y realiza un rollback, es decir,
+    deshace cualquier cambio realizado en la base de datos durante la transacción.
+     */
+    @Transactional
+    @PostMapping
+    @RequestMapping(value = "/transactiondone", method = RequestMethod.POST)
+    public String ResultadoTransaccion(HttpServletRequest request){
+        long numero_tarjeta = Long.parseLong(request.getParameter("numero_tarjeta"));
+        int numero_referencia = Integer.parseInt(request.getParameter("numero_referencia"));
+        float valor_compra = Float.parseFloat(request.getParameter("valor_compra"));
+        String direccion_compra = request.getParameter("direccion_compra");
+        System.out.println("Requests: " + numero_referencia + " " + numero_tarjeta + " " + valor_compra + " " + direccion_compra);
+
+        List<Card> cardList = (List<Card>) PSIMPLcard.cardRepository.findAll();
+        Set<Long> usedCardNumbers = new HashSet<>();
+        HashMap<Long, Boolean> hashCardNumber_Enrolled = new HashMap<>();
+        for (int i = 0; i < cardList.size(); i++) {
+            hashCardNumber_Enrolled.put(cardList.get(i).getNumero_tarjeta(), cardList.get(i).isEnrolada());
+            usedCardNumbers.add(cardList.get(i).getNumero_tarjeta());
+        }
+
+        if(usedCardNumbers.contains(numero_tarjeta) && hashCardNumber_Enrolled.get(numero_tarjeta)){
+            PSIMPLtransaction.transactionRepository.save(new Transaction(numero_tarjeta, numero_referencia, valor_compra, direccion_compra));
+            System.out.println("00, Compra exitosa");
+            estadoTransaccion = "Aprobada";
+            //  return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El número de validación debe estar entre 1 y 100.");
+            return "redirect:/tarjeta/mostrartarjetas"; // Redirecciona a la página de tarjetas
+        }
+        else if(hashCardNumber_Enrolled.get(numero_tarjeta) == null){
+            estadoTransaccion = "Rechazada";
+            throw new CustomException("01, Tarjeta no existe");
+        }
+        else {
+            estadoTransaccion = "Rechazada";
+            throw new CustomException("02, Tarjeta no enrolada");
+        }
+    }
+
+    @DeleteMapping("/{numero_referencia}")
+    public ResponseEntity AnularTransaccion(@PathVariable int numero_referencia) {
+        Transaction transaction = PSIMPLtransaction.transactionRepository.findByNumeroReferencia(numero_referencia);
+        if (transaction == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        LocalDateTime fechaActual = LocalDateTime.now();
+        LocalDateTime fechaCompra = transaction.getFecha_compra();
+        Duration duracion = Duration.between(fechaCompra, fechaActual);
+        long minutosTranscurridos = duracion.toMinutes();
+
+        if (minutosTranscurridos > 5) {
+            return ResponseEntity.badRequest().body("No se puede anular una compra después de 5 minutos.");
+        }
+        PSIMPLtransaction.transactionRepository.deleteByNumeroReferencia(numero_referencia);  // Anula la compra, es decir, la elimina de la base de datos
+        return ResponseEntity.ok().build();
     }
 
     /*@PutMapping

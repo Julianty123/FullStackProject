@@ -10,19 +10,19 @@
         <h1>Registro de Tarjetas</h1>
         <form action="/tarjeta/insertcard" method="POST">
             <label for="numero_tarjeta">Numero de tarjeta:</label><br>
-            <input type="number" id="numero_tarjeta" name="numero_tarjeta"><br>
+            <input type="number" id="numero_tarjeta" name="numero_tarjeta" required><br>
 
             <label for="titular">Titular:</label><br>
-            <input type="text" id="titular" name="titular"><br>
+            <input type="text" id="titular" name="titular" required><br>
 
             <label for="cedula">Cedula:</label><br>
-            <input type="text" id="cedula" name="cedula"><br>
+            <input type="text" id="cedula" name="cedula" required><br>
 
             <label for="tipo">Tipo:</label><br>
-            <input type="text" id="tipo" name="tipo"><br> <!-- type="date" -->
+            <input type="text" id="tipo" name="tipo" required><br> <!-- type="date" -->
 
             <label for="telefono">Telefono:</label><br>
-            <input type="number" id="telefono" name="telefono"><br><br>
+            <input type="number" id="telefono" name="telefono" required><br><br>
 
             <input type="submit" value="Crear">
         </form>
