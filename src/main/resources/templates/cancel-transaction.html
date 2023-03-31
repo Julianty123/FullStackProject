@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cancelar transaccion</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<h1>Cancelar transaccion</h1>
+<form action="/tarjeta/transactioncanceled" method="POST">
+    <label for="numero_tarjeta">Numero de tarjeta:</label><br>
+    <input type="number" id="numero_tarjeta" name="numero_tarjeta" required><br>
+
+    <label for="numero_referencia">Numero de referencia:</label><br>
+    <input type="number" id="numero_referencia" name="numero_referencia" required><br>
+
+    <label for="valor_compra">Valor de la compra:</label><br>
+    <input type="number" id="valor_compra" name="valor_compra" required><br>
+
+    <input type="submit" value="Enrolar">
+</form>
+</body>
+</html>

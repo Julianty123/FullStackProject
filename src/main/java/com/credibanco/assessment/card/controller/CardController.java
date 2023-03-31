@@ -9,7 +9,6 @@ import com.credibanco.assessment.card.service.impl.PSIMPLtransaction;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -56,15 +55,8 @@ public class CardController{
 
     // Si no ocurre ninguna excepción en el metodo, se considera la transaccion aprobada automaticamente
     public String estadoTransaccion;
-
     public static JdbcTemplate jdbcTemplate;
 
-    private final PSIMPLcard PSIMPLcard;
-
-    @Autowired
-    public CardController(PSIMPLcard PSIMPLcard) {
-        this.PSIMPLcard = PSIMPLcard;
-    }
 
     /*@GetMapping("/error")
     public ResponseEntity<String> handleErrors(ServletException ex) {
@@ -87,7 +79,7 @@ public class CardController{
     @RequestMapping(value = "/insertcard", method = RequestMethod.POST)
     public String CrearTarjeta(@ModelAttribute("card") Card card) {
         card.setNumero_validacion(); // Se agrega el número de validación
-        this.PSIMPLcard.crearPersona(card); // Crear una instancia de Persona con los datos para insertar en la base de datos
+        PSIMPLcard.crearPersona(card); // Crear una instancia de Persona con los datos para insertar en la base de datos
         System.out.println("Tarjeta creada: " + card);
         return "redirect:/tarjeta/mostrartarjetas"; // Redirecciona a la página de tarjetas
         //return ResponseEntity.status(HttpStatus.CREATED).body(nuevaCard); // Devuelve un estado 201 de creación exitosa
@@ -109,16 +101,22 @@ public class CardController{
         return "cards"; // cards.html
     }
 
-    @GetMapping("/json")
+    @GetMapping("/jsoncard")
     public ResponseEntity<List<Card>> getCards() {
-        List<Card> listCards = this.PSIMPLcard.consultarTarjetas();
+        List<Card> listCards = PSIMPLcard.consultarTarjetas();
         return ResponseEntity.ok(listCards);
+    }
+
+    @GetMapping("/jsontransaction")
+    public ResponseEntity<List<Transaction>> getTransactions() {
+        List<Transaction> transactionList = PSIMPLtransaction.consultarTransacciones();
+        return ResponseEntity.ok(transactionList);
     }
 
     @GetMapping
     @RequestMapping(value = "/mostrartarjetas", method = RequestMethod.GET)
     public String MostrarTarjetas(Model model) {
-        List<Card> listCards = this.PSIMPLcard.consultarTarjetas();
+        List<Card> listCards = PSIMPLcard.consultarTarjetas();
         List<CardFrontEnd> listCardsMasked = new ArrayList<>();
         // ciclo for con i
         for (int i = 0; i < listCards.size(); i++) {
@@ -260,7 +258,7 @@ public class CardController{
             System.out.println("00, Compra exitosa");
             estadoTransaccion = "Aprobada";
             //  return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El número de validación debe estar entre 1 y 100.");
-            return "redirect:/tarjeta/mostrartarjetas"; // Redirecciona a la página de tarjetas
+            return "redirect:/tarjeta/jsontransaction"; // Redirecciona a la página de tarjetas
         }
         else if(hashCardNumber_Enrolled.get(numero_tarjeta) == null){
             estadoTransaccion = "Rechazada";
@@ -272,23 +270,49 @@ public class CardController{
         }
     }
 
-    @DeleteMapping("/{numero_referencia}")
-    public ResponseEntity AnularTransaccion(@PathVariable int numero_referencia) {
+    @GetMapping
+    @RequestMapping(value = "/anulartransaccion", method = RequestMethod.GET)
+    public String AnularTransaccion() {
+        return "cancel-transaction";
+    }
+
+    //@DeleteMapping("/{numero_referencia}")
+    @RequestMapping(value = "/transactioncanceled", method = RequestMethod.POST)
+
+    public ResponseEntity<?> TransaccionAnulada(HttpServletRequest request) {
+        int numero_tarjeta = Integer.parseInt(request.getParameter("numero_tarjeta"));
+        int numero_referencia = Integer.parseInt(request.getParameter("numero_referencia"));
+        float valor_compra = Float.parseFloat(request.getParameter("valor_compra"));
         Transaction transaction = PSIMPLtransaction.transactionRepository.findByNumeroReferencia(numero_referencia);
-        if (transaction == null) {
-            return ResponseEntity.notFound().build();
+
+        List<Transaction> transactionList = (List<Transaction>) PSIMPLtransaction.transactionRepository.findAll();
+        Set<Integer> referenceList = new HashSet<>();
+        for (int i = 0; i < transactionList.size(); i++) {
+            referenceList.add(transactionList.get(i).getNumero_referencia());
         }
 
-        LocalDateTime fechaActual = LocalDateTime.now();
-        LocalDateTime fechaCompra = transaction.getFecha_compra();
-        Duration duracion = Duration.between(fechaCompra, fechaActual);
-        long minutosTranscurridos = duracion.toMinutes();
+        // Código de respuesta (00, 01, 02), mensaje (Compra anulada, numero de
+        // referencia inválido, No se puede anular transacción), número de referencia
 
-        if (minutosTranscurridos > 5) {
-            return ResponseEntity.badRequest().body("No se puede anular una compra después de 5 minutos.");
+        if (!referenceList.contains(numero_referencia)) {
+            //  return ResponseEntity.notFound().build();
+            throw new CustomException(String.format("01, Numero de referencia invalido, %d", numero_referencia));
         }
-        PSIMPLtransaction.transactionRepository.deleteByNumeroReferencia(numero_referencia);  // Anula la compra, es decir, la elimina de la base de datos
-        return ResponseEntity.ok().build();
+        else {
+            LocalDateTime fechaActual = LocalDateTime.now();
+            LocalDateTime fechaCompra = transaction.getFecha_compra();
+            Duration duracion = Duration.between(fechaCompra, fechaActual);
+            long minutosTranscurridos = duracion.toMinutes();
+
+            if (minutosTranscurridos > 5) {
+                throw new CustomException(String.format("02, No se puede anular la transaccion después de 5 minutos, %d", numero_referencia));
+            }
+            else{
+                System.out.printf("00, Compra anulada, %d\n", numero_referencia);
+                PSIMPLtransaction.transactionRepository.deleteByNumeroReferencia(numero_referencia);  // Anula la compra, es decir, la elimina de la base de datos
+                return ResponseEntity.ok().build();
+            }
+        }
     }
 
     /*@PutMapping

@@ -13,7 +13,7 @@ public interface CardService {
 
     // void actualizarTarjeta(int numero_validacion, long numero_tarjeta);
 
-    public void crearPersona(Card card) throws ParseException;
+    public void crearTarjeta(Card card) throws ParseException;
 
     public Card modificarTarjeta(Card card);
 

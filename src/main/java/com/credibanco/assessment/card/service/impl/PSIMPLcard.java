@@ -11,7 +11,7 @@ import java.util.List;
 
 @Service
 @Transactional
-public class PSIMPLcard implements CardService {
+public class PSIMPLcard {
     public static CardRepository cardRepository;
 
     @Autowired
@@ -19,27 +19,22 @@ public class PSIMPLcard implements CardService {
         PSIMPLcard.cardRepository = cardRepository;
     }
 
-    @Override
-    public List<Card> consultarTarjetas() {
+    public static List<Card> consultarTarjetas() {
         return (List<Card>) cardRepository.findAll();
     }
 
-    @Override
-    public void crearPersona(Card nuevaCard) {
+    public static void crearPersona(Card nuevaCard) {
         cardRepository.save(nuevaCard);    // Guarda la entidad en la base de datos
     }
 
-    @Override
     public Card modificarTarjeta(Card card) {
         return cardRepository.save(card);
     }
 
-    @Override
     public Card buscarTarjeta(int id) {
         return cardRepository.findById(id).get(); // repo.findById(id).orElse(null)
     }
 
-    @Override
     public void eliminarPersona(int id) {
         cardRepository.deleteById(id);
     }
