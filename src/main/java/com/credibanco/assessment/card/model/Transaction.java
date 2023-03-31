@@ -18,6 +18,7 @@ public class Transaction {
     private LocalDateTime fecha_compra;
 
     public Transaction() {
+
     }
 
     public Transaction(long numero_tarjeta, int numero_referencia, float valor_compra, String direccion_compra) {

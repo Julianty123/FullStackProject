@@ -25,6 +25,8 @@ public class Card {
     private int telefono;
     private boolean enrolada;
 
+    public Card() {}
+
     // getters y setters
     public int getId() {
         return id;
@@ -40,8 +42,11 @@ public class Card {
 
     public void setNumero_validacion() {
         this.numero_validacion = ThreadLocalRandom.current().nextInt(100);
+        verifyNumber();
+    }
 
-        // Verifica si el numero de validacion ya existe en la base de datos
+    // Verifica si el numero de validacion existe en la base de datos
+    public void verifyNumber(){
         List<Card> cardList = (List<Card>) PSIMPLcard.cardRepository.findAll();
         Set<Integer> usedValidationNumbers = new HashSet<>();
         for (int i = 0; i < cardList.size(); i++) {
@@ -115,26 +120,3 @@ public class Card {
                 numero_validacion, numero_tarjeta, titular, cedula, tipo, telefono, enrolada);
     }
 }
-
-/*
-public CardTest(int numeroValidacion, long numeroTarjeta, String titular, long cedula, String tipo, int telefono) {
-        if (numeroValidacion < 1 || numeroValidacion > 100) {
-            throw new IllegalArgumentException("El número de validación debe estar entre 1 y 100.");
-        }
-        this.numeroValidacion = numeroValidacion;
-        if (String.valueOf(numeroTarjeta).length() < 16 || String.valueOf(numeroTarjeta).length() > 19) {
-            throw new IllegalArgumentException("El número de tarjeta debe tener entre 16 y 19 dígitos.");
-        }
-        this.numeroTarjeta = numeroTarjeta;
-        this.titular = titular;
-        if (String.valueOf(cedula).length() < 10 || String.valueOf(cedula).length() > 15) {
-            throw new IllegalArgumentException("La cédula debe tener entre 10 y 15 caracteres.");
-        }
-        this.cedula = cedula;
-        this.tipo = tipo;
-        if (String.valueOf(telefono).length() != 10) {
-            throw new IllegalArgumentException("El teléfono debe tener 10 dígitos.");
-        }
-        this.telefono = telefono;
-    }
- */
