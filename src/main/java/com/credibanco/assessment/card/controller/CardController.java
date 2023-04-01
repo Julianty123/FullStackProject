@@ -258,7 +258,7 @@ public class CardController{
             System.out.println("00, Compra exitosa");
             estadoTransaccion = "Aprobada";
             //  return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El número de validación debe estar entre 1 y 100.");
-            return "redirect:/tarjeta/jsontransaction"; // Redirecciona a la página de tarjetas
+            return "redirect:/tarjeta/jsontransaction"; // Redirecciona a la página de transacciones
         }
         else if(hashCardNumber_Enrolled.get(numero_tarjeta) == null){
             estadoTransaccion = "Rechazada";
@@ -278,8 +278,7 @@ public class CardController{
 
     //@DeleteMapping("/{numero_referencia}")
     @RequestMapping(value = "/transactioncanceled", method = RequestMethod.POST)
-
-    public ResponseEntity<?> TransaccionAnulada(HttpServletRequest request) {
+    public String TransaccionAnulada(HttpServletRequest request) {
         int numero_tarjeta = Integer.parseInt(request.getParameter("numero_tarjeta"));
         int numero_referencia = Integer.parseInt(request.getParameter("numero_referencia"));
         float valor_compra = Float.parseFloat(request.getParameter("valor_compra"));
@@ -310,7 +309,7 @@ public class CardController{
             else{
                 System.out.printf("00, Compra anulada, %d\n", numero_referencia);
                 PSIMPLtransaction.transactionRepository.deleteByNumeroReferencia(numero_referencia);  // Anula la compra, es decir, la elimina de la base de datos
-                return ResponseEntity.ok().build();
+                return "redirect:/tarjeta/jsontransaction"; // Redirecciona a la página de tarjetas
             }
         }
     }

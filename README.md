@@ -30,7 +30,7 @@ CREATE TABLE cards (
 # Crea una tabla para almacenar las transacciones
 CREATE TABLE transactions (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    numero_tarjeta BIGINT NOT NULL UNIQUE,
+    numero_tarjeta BIGINT NOT NULL,
     numero_referencia INT NOT NULL UNIQUE,
     valor_compra FLOAT,
     direccion_compra VARCHAR(255),
